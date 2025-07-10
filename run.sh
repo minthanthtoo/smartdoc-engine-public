@@ -2,28 +2,60 @@
 
 SERVICE=${1:-api_core}
 
-# Global Settings
-PORT_API=${PORT:-7860}
-HOST="0.0.0.0"
+# === 🌐 Load ENV
+ENV_FILE=".env.local"
+[[ "$ENV" == "production" ]] && ENV_FILE=".env.prod"
+export $(grep -v '^#' "$ENV_FILE" | xargs)
 
-# Color helpers
+# === 🧠 Determine Mode & Host
+if [[ "$ENV" == "production" ]]; then
+    MODE="prod"
+    HOST=${HOST:-"0.0.0.0"}
+else
+    MODE="dev"
+    HOST="127.0.0.1"
+fi
+
+# === 🧪 Helper: extract port from URL
+extract_port() {
+    local url=$1
+    echo "$url" | sed -nE 's@.*:(//)?[^:/]+:([0-9]+).*@\2@p'
+}
+
+# === 🔢 Assign Ports Based on Mode
+if [[ "$MODE" == "prod" ]]; then
+    PORT_CONVERT=$PORT
+    PORT_COMPRESS=$PORT
+    PORT_OCR=$PORT
+    PORT_API=$PORT
+    PORT_FILE_SERVER=$PORT
+else
+    PORT_CONVERT=$(extract_port "$CONVERT_API_URL")
+    PORT_COMPRESS=$(extract_port "$COMPRESS_API_URL")
+    PORT_OCR=$(extract_port "$OCR_API_URL")
+    PORT_API=7860
+    PORT_FILE_SERVER=8080
+fi
+
+# === 🎨 Color helpers
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+# === 🚀 Start Selected Service
 function start_service() {
     case "$1" in
         compress)
             echo -e "${GREEN}▶ Starting Compress API service...${NC}"
-            uvicorn services.compress_service.main:router --host $HOST --port 8001
+            uvicorn services.compress_service.main:router --host $HOST --port $PORT_COMPRESS
             ;;
         ocr)
             echo -e "${GREEN}▶ Starting OCR API service...${NC}"
-            uvicorn services.ocr_service.main:router --host $HOST --port 8002
+            uvicorn services.ocr_service.main:router --host $HOST --port $PORT_OCR
             ;;
         convert)
             echo -e "${GREEN}▶ Starting Convert API service...${NC}"
-            uvicorn services.convert_service.main:router --host $HOST --port 8003
+            uvicorn services.convert_service.main:router --host $HOST --port $PORT_CONVERT
             ;;
         api_core)
             echo -e "${GREEN}▶ Starting Full API Core (all routes)...${NC}"
@@ -31,17 +63,17 @@ function start_service() {
             ;;
         telegram)
             echo -e "${GREEN}▶ Starting Telegram Bot...${NC}"
-            python services/telegram_bot/bot.py
+            python services/telegram_bot/bot.py 
             ;;
         file_server)
             echo -e "${GREEN}▶ Starting File Server (FastAPI)...${NC}"
             export FILE_SERVER_ROOT=./tmp
             mkdir -p ./tmp
-            uvicorn services.telegram_bot.file_server:app --host $HOST --port 8888
+            uvicorn services.telegram_bot.file_server:app --host $HOST --port $PORT_FILE_SERVER
             ;;
         streamlit)
             echo -e "${GREEN}▶ Starting Streamlit UI (port 8501)...${NC}"
-            streamlit run web/streamlit_ui.py --server.port $PORT_API --server.address $HOST
+            streamlit run web/streamlit_ui.py --server.port=$PORT_API --server.address=$HOST
             ;;
         cli)
             echo -e "${GREEN}▶ Running CLI help (dev)...${NC}"
