@@ -1,3 +1,11 @@
+from fastapi import HTTPException
+from pytesseract import TesseractNotFoundError
+
+try:
+    text = pytesseract.image_to_string(image, lang=lang)
+except TesseractNotFoundError:
+    raise HTTPException(status_code=500, detail="Tesseract is not installed on the server.")
+    
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 from shared.ocr_engine import extract_text
