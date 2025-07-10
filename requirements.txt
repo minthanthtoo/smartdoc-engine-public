@@ -1,4 +1,6 @@
 # Example: services/convert_service/requirements.txt
+aiogram
+aiohttp
 fastapi
 uvicorn
 python-multipart
