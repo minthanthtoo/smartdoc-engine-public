@@ -16,7 +16,7 @@ TELEGRAM_BOT_URL = f"https://t.me/{TELEGRAM_BOT_USERNAME}"
 st.set_page_config(page_title="📂 SmartDoc Engine", layout="centered")
 
 st.title("📂 SmartDoc Engine")
-tabs = st.tabs(["🧠 OCR", "📦 Compress PDF", "🔁 Convert File"])
+tabs = st.tabs(["🧠 OCR", "📦 Compress PDF", "🔁 Convert File", "🤖 Telegram Bot"])
 
 # ========================
 # TAB 1: OCR
