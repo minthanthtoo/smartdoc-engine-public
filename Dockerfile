@@ -22,13 +22,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Conditional installs for Convert and OCR services
-RUN if [ "$SERVICE_NAME" = "convert" ] || [ "$SERVICE_NAME" = "web" ]; then \
+RUN if [ "$SERVICE_NAME" = "convert" ] || [ "$SERVICE_NAME" = "streamlit" ]; then \
       echo "Installing convert tools for $SERVICE_NAME"; \
       apt-get update && \
       apt-get install -y libreoffice pandoc && \
       rm -rf /var/lib/apt/lists/*; \
     fi && \
-    if [ "$SERVICE_NAME" = "ocr" ] || [ "$SERVICE_NAME" = "web" ]; then \
+    if [ "$SERVICE_NAME" = "ocr" ] || [ "$SERVICE_NAME" = "streamlit" ]; then \
       echo "Installing OCR tools for $SERVICE_NAME"; \
       apt-get update && \
       apt-get install -y tesseract-ocr tesseract-ocr-eng && \
