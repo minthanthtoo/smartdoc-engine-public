@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SERVICE=${1:-api_core}
+#SERVICE=${1:-api_core}
+SERVICE=${1:-${SERVICE_NAME:-all}}
 
 # === 🌐 Load ENV
 ENV_FILE=".env.local"
