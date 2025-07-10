@@ -10,22 +10,27 @@ WORKDIR /app
 # Copy source code
 COPY . /app
 
-# Install always-needed tools
+# Always-needed tools + libmagic for python-magic
 RUN apt-get update && \
     apt-get install -y \
     ghostscript \
     curl \
+    file \
+    libmagic-dev \
     software-properties-common && \
     rm -rf /var/lib/apt/lists/*
 
-# Conditional installs for OCR and Convert services
+# Conditional installs for Convert and OCR services
 RUN if [ "$SERVICE_NAME" = "convert" ]; then \
+      echo "Installing convert tools for SERVICE_NAME=$SERVICE_NAME"; \
       apt-get update && \
       apt-get install -y libreoffice pandoc && \
       rm -rf /var/lib/apt/lists/*; \
     elif [ "$SERVICE_NAME" = "ocr" ]; then \
+      echo "Installing OCR tools for SERVICE_NAME=$SERVICE_NAME"; \
       apt-get update && \
       apt-get install -y tesseract-ocr && \
+      tesseract --version && \
       rm -rf /var/lib/apt/lists/*; \
     fi
 
