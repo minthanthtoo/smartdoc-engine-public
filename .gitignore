@@ -1,0 +1,57 @@
+.env
+.env.local
+.env.prod
+# === Python cache & environment ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.log
+
+# === Virtual envs ===
+env/
+venv/
+.rag-env/
+.rag_env/
+.rag-venv/
+.rag-venv/
+rag-env/
+
+# === Build / dist / packaging ===
+build/
+dist/
+*.tar.gz
+*.whl
+
+# === Temporary or generated files ===
+*.bak
+*.swp
+*.tmp
+*.DS_Store
+*.orig
+*.old
+
+# === Results, samples, converted/compressed output ===
+converted.pdf
+compressed.pdf
+result.pdf
+resume.doc
+scan.png
+sample.pdf
+
+# === CLI related ===
+smardoc_cli.sh
+smartdoc_cli.egg-info/
+
+# === IDE/editor specific ===
+.vscode/
+.idea/
+*.code-workspace
+
+# === OS-specific ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
