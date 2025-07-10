@@ -74,7 +74,7 @@ function start_service() {
             ;;
         streamlit)
             echo -e "${GREEN}▶ Starting Streamlit UI (port 8501)...${NC}"
-            streamlit run web/streamlit_ui.py --server.port=$PORT_API --server.address=$HOST
+            PYTHONPATH=. streamlit run web/streamlit_ui.py --server.port=$PORT_API --server.address=$HOST
             ;;
         cli)
             echo -e "${GREEN}▶ Running CLI help (dev)...${NC}"
