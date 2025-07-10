@@ -8,5 +8,6 @@ python-magic==0.4.27
 #python-magic-bin
 python-multipart==0.0.9
 pytesseract==0.3.10
+qrcode==8.2
 streamlit==1.46.1
 #shared @ file:shared  # Optional: use pip install -e ../.. instead
