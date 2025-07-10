@@ -80,9 +80,26 @@ function start_service() {
             python cli/smartdoc_cli.py --help
             ;;
         all)
-            echo -e "${GREEN}▶ Starting All Services (api_core + telegram)...${NC}"
+            echo -e "${GREEN}▶ Starting ALL SmartDoc Services...${NC}"
+
+            uvicorn services.compress_service.main:router --host $HOST --port $PORT_COMPRESS &
+            echo -e "${GREEN}🧱 Compress API started on port $PORT_COMPRESS${NC}"
+
+            uvicorn services.ocr_service.main:router --host $HOST --port $PORT_OCR &
+            echo -e "${GREEN}🔤 OCR API started on port $PORT_OCR${NC}"
+
+            uvicorn services.convert_service.main:router --host $HOST --port $PORT_CONVERT &
+            echo -e "${GREEN}🔄 Convert API started on port $PORT_CONVERT${NC}"
+
+            uvicorn services.telegram_bot.file_server:app --host $HOST --port $PORT_FILE_SERVER &
+            echo -e "${GREEN}🗂️ File Server started on port $PORT_FILE_SERVER${NC}"
+
             uvicorn app:app --host $HOST --port $PORT_API &
+            echo -e "${GREEN}🧠 Core API started on port $PORT_API${NC}"
+
             python services/telegram_bot/bot.py &
+            echo -e "${GREEN}🤖 Telegram Bot started${NC}"
+
             wait
             ;;
         *)

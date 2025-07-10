@@ -190,7 +190,7 @@ async def handle_process(callback: CallbackQuery):
 
 # === 🔁 Start File Server in Thread
 def start_file_server():
-    uvicorn.run(file_server.app, host="0.0.0.0", port=8080, log_level="warning")
+    uvicorn.run(file_server.app, host="0.0.0.0", port=os.getenv("PORT",8080), log_level="warning")
 
 # === 🏁 Main Entrypoint
 async def main():
