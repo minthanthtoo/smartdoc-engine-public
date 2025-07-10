@@ -5,7 +5,7 @@ import tempfile
 
 router = APIRouter()
 
-@router.post("/")
+@router.post("/compress")
 async def compress_file(file: UploadFile = File(...), mode: str = "balanced"):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_input:
         temp_input.write(await file.read())

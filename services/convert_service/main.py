@@ -7,7 +7,7 @@ from shared.converter import convert_doc
 
 router = APIRouter()
 
-@router.post("/")
+@router.post("/convert")
 async def convert_file(file: UploadFile = File(...), to: str = "pdf"):
     # Extract extension (e.g., ".docx")
     extension = os.path.splitext(file.filename)[-1]
