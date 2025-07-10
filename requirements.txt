@@ -3,4 +3,4 @@ fastapi
 uvicorn
 python-multipart
 python-dotenv
-shared @ file:shared  # Optional: use pip install -e ../.. instead
+#shared @ file:shared  # Optional: use pip install -e ../.. instead
