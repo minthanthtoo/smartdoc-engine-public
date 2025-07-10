@@ -16,7 +16,7 @@ RUN apt-get update && \
     ghostscript \
     curl \
     file \
-    libmagic-dev \
+    libmagic1 libmagic-dev \
     software-properties-common && \
     rm -rf /var/lib/apt/lists/*
 
@@ -29,7 +29,7 @@ RUN if [ "$SERVICE_NAME" = "convert" ]; then \
     elif [ "$SERVICE_NAME" = "ocr" ]; then \
       echo "Installing OCR tools for SERVICE_NAME=$SERVICE_NAME"; \
       apt-get update && \
-      apt-get install -y tesseract-ocr && \
+      apt-get install -y tesseract-ocr tesseract-ocr-eng && \
       tesseract --version && \
       rm -rf /var/lib/apt/lists/*; \
     fi
