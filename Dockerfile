@@ -29,4 +29,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENTRYPOINT ["bash", "run.sh"]
 
 # Default command (can be overridden by CMD or in Render)
-CMD ["all"]
+CMD []
