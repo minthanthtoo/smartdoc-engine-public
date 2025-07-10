@@ -56,7 +56,7 @@ user_state = {}  # user_id -> { action, files[] }
 async def cmd_start(msg: types.Message):
     print(f"🟢 /start by user {msg.from_user.id} ({msg.from_user.username})")
     await msg.answer(
-        "👋 Welcome to SmartDoc Bot!\n\nChoose what you'd like to do:",
+        "👋 Welcome to SmartDoc Bot!\n\n🤖 SmartDoc Engine Bot Converts files, extracts text, and compresses PDFs using AI.\n\nChoose what you'd like to do:",
         reply_markup=build_command_keyboard()
     )
 

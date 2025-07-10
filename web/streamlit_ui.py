@@ -4,8 +4,14 @@ import pytesseract
 import json
 import tempfile
 import os
+import qrcode
+from io import BytesIO
 from shared.compressor import compress_pdf
 from shared.converter import convert_doc
+
+# Telegram bot config
+TELEGRAM_BOT_USERNAME = "SmartDocEngineBot"
+TELEGRAM_BOT_URL = f"https://t.me/{TELEGRAM_BOT_USERNAME}"
 
 st.set_page_config(page_title="📂 SmartDoc Engine", layout="centered")
 
@@ -82,3 +88,32 @@ with tabs[2]:
                     st.download_button("⬇️ Download Converted File", f, file_name=f"converted.{to_format}")
             except Exception as e:
                 st.error(f"❌ Conversion failed: {e}")
+
+
+# ========================
+# TAB 4: Telegram Bot Invite
+# ========================
+with tabs[3]:
+    st.header("🤖 SmartDoc Telegram Bot")
+    st.markdown("""
+        Use our **Telegram bot** to extract text, compress PDFs, or convert files — all within Telegram chat!
+
+        - Supports 📄 PDFs, 🖼️ images, and 📝 documents
+        - Multilingual OCR (English, Burmese, Japanese, Chinese)
+        - Instant download links
+    """)
+
+    st.markdown(f"🔗 [Click to Open in Telegram → `{TELEGRAM_BOT_USERNAME}`]({TELEGRAM_BOT_URL})")
+
+    # Button-style link
+    st.markdown(f"""
+        <a href="{TELEGRAM_BOT_URL}" target="_blank">
+            <button style='padding:10px 20px; font-size:16px;'>🚀 Start Bot</button>
+        </a>
+    """, unsafe_allow_html=True)
+
+    # Show QR code
+    qr = qrcode.make(TELEGRAM_BOT_URL)
+    buf = BytesIO()
+    qr.save(buf)
+    st.image(buf.getvalue(), caption="📱 Scan to open bot on mobile", use_column_width=False)
