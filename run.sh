@@ -42,7 +42,7 @@ fi
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
-
+echo -e "${MODE}, ${HOST}; ${PORT}; conv:${PORT_CONVERT}; com:${PORT_COMPRESS}; ocr:${PORT_OCR}; api:${PORT_API}; file:${PORT_FILE_SERVER}"
 # === 🚀 Start Selected Service
 function start_service() {
     case "$1" in
