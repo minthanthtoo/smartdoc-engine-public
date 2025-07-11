@@ -13,7 +13,11 @@ from aiogram.types import FSInputFile, InlineKeyboardMarkup, InlineKeyboardButto
 from aiogram.filters import Command
 
 # === 🔧 Load .env config
-env_file = ".env.prod" if os.getenv("ENV") == "production" else ".env.local"
+load_dotenv(".env") # base env
+env_mode = os.getenv("ENV", "local")
+env_file = f".env.{env_mode}"
+if not os.path.exists(env_file):
+    raise FileNotFoundError(f"❌ ENV file '{env_file}' not found.")
 load_dotenv(env_file)
 
 TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
