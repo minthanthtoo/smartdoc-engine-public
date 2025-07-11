@@ -29,7 +29,7 @@ with tabs[0]:
 
     if ocr_file and st.button("🚀 Run OCR"):
         image = Image.open(ocr_file)
-        st.image(image, caption="Preview", use_column_width=True)
+        st.image(image, caption="Preview", use_container_width=True)
 
         with st.spinner("Extracting..."):
             if fmt == "json":
@@ -116,4 +116,4 @@ with tabs[3]:
     qr = qrcode.make(TELEGRAM_BOT_URL)
     buf = BytesIO()
     qr.save(buf)
-    st.image(buf.getvalue(), caption="📱 Scan to open bot on mobile", use_column_width=False)
+    st.image(buf.getvalue(), caption="📱 Scan to open bot on mobile", use_container_width=False)
