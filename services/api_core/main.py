@@ -1,3 +1,4 @@
+# services/api_core/main.py
 import os
 import secrets
 from fastapi import FastAPI, Request
@@ -8,14 +9,14 @@ from services.compress_service.main import router as compress_router
 from services.ocr_service.main import router as ocr_router
 from services.convert_service.main import router as convert_router
 
-# Step 1: Load base .env to get ENV variable
-load_dotenv(".env")  # Fallback base
-ENV = os.getenv("ENV", "development").lower()
+# Step 1: Load base .env always
+load_dotenv(".env")
 
-# Step 2: Load environment-specific .env
-env_file = ".env.prod" if ENV == "production" else ".env.local"
-if os.path.exists(env_file):
-    load_dotenv(env_file, override=True)
+# Step 2: Load override if ENV is set
+ENV = os.getenv("ENV", "local").lower()
+env_override = f".env.{ENV}"
+if os.path.exists(env_override):
+    load_dotenv(env_override, override=True)
 
 # Now re-read after loading full env
 api_key = os.getenv("API_KEY")
@@ -66,6 +67,6 @@ async def verify_api_key(request: Request, call_next):
             )
     return await call_next(request)
 
-app.include_router(compress_router, prefix="/api/v1/compress")
-app.include_router(ocr_router, prefix="/api/v1/ocr")
-app.include_router(convert_router, prefix="/api/v1/convert")
+app.include_router(compress_router, prefix="/api/v1")
+app.include_router(ocr_router, prefix="/api/v1")
+app.include_router(convert_router, prefix="/api/v1")

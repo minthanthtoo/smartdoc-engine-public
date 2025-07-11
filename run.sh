@@ -1,48 +1,43 @@
 #!/bin/bash
 
-#SERVICE=${1:-api_core}
+# === 🚦 Detect or set service
 SERVICE=${1:-${SERVICE_NAME:-all}}
 
-# === 🌐 Load ENV
-ENV_FILE=".env.local"
-[[ "$ENV" == "production" ]] && ENV_FILE=".env.prod"
+# === 🌐 Load ENV file
+ENV=${ENV:-local}
+ENV_FILE=".env.${ENV}"
+[[ ! -f "$ENV_FILE" && -f ".env" ]] && ENV_FILE=".env"
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "❌ ENV file '$ENV_FILE' not found."
+    exit 1
+fi
 export $(grep -v '^#' "$ENV_FILE" | xargs)
 
-# === 🧠 Determine Mode & Host
-if [[ "$ENV" == "production" ]]; then
-    MODE="prod"
-    HOST=${HOST:-"0.0.0.0"}
-else
-    MODE="dev"
-    HOST="127.0.0.1"
-fi
+# === 🧠 Host & Mode
+HOST=${HOST:-127.0.0.1}
+MODE="multi"
+[[ "$ENV" == "monolith" ]] && MODE="monolith"
+[[ "$ENV" == "production" ]] && HOST="0.0.0.0"
 
-# === 🧪 Helper: extract port from URL
-extract_port() {
-    local url=$1
-    echo "$url" | sed -nE 's@.*:(//)?[^:/]+:([0-9]+).*@\2@p'
-}
+# === 🔧 Port fallback
+PORT_API=${PORT_API:-7860}
+PORT_CONVERT=${PORT_CONVERT:-8003}
+PORT_COMPRESS=${PORT_COMPRESS:-8001}
+PORT_OCR=${PORT_OCR:-8002}
+PORT_FILE_SERVER=${PORT_FILE_SERVER:-8080}
 
-# === 🔢 Assign Ports Based on Mode
-if [[ "$MODE" == "prod" ]]; then
-    PORT_CONVERT=$PORT
-    PORT_COMPRESS=$PORT
-    PORT_OCR=$PORT
-    PORT_API=$PORT
-    PORT_FILE_SERVER=$PORT
-else
-    PORT_CONVERT=$(extract_port "$CONVERT_API_URL")
-    PORT_COMPRESS=$(extract_port "$COMPRESS_API_URL")
-    PORT_OCR=$(extract_port "$OCR_API_URL")
-    PORT_API=7860
-    PORT_FILE_SERVER=8080
-fi
+# === 🛡️ Expose unified PORT for PaaS (e.g., RENDER/REPLIT)
+export PORT=${PORT:-$PORT_API}
 
 # === 🎨 Color helpers
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+echo -e "${GREEN}ENV: $ENV | MODE: $MODE | HOST: $HOST${NC}"
+echo -e "${GREEN}▶️ $SERVICE | Ports: OCR=$PORT_OCR | Compress=$PORT_COMPRESS | Convert=$PORT_CONVERT | API=$PORT_API${NC}"
 echo -e "${SERVICE};${MODE}//${HOST}:${PORT}; conv:${PORT_CONVERT}; com:${PORT_COMPRESS}; ocr:${PORT_OCR}; api:${PORT_API}; file:${PORT_FILE_SERVER}"
+
 # === 🚀 Start Selected Service
 function start_service() {
     case "$1" in
@@ -103,6 +98,10 @@ function start_service() {
 
             wait
             ;;
+        monolith)
+            echo -e "${GREEN}▶ Starting monolith app with mounted routers...${NC}"
+            uvicorn app:app --host $HOST --port $PORT_API
+            ;;
         *)
             echo -e "${RED}❌ Unknown service: '$SERVICE'${NC}"
             echo "Usage: bash run.sh [compress|ocr|convert|api_core|telegram|streamlit|cli|all]"
@@ -111,4 +110,9 @@ function start_service() {
     esac
 }
 
-start_service "$SERVICE"
+# === 🔁 Auto-switch to monolith if ENV=monolith or RENDER/REPLIT
+if [[ "$ENV" == "monolith" || "$SERVICE" == "monolith" ]]; then
+    start_service monolith
+else
+    start_service "$SERVICE"
+fi
